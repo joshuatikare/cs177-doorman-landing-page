@@ -1,0 +1,422 @@
+<title>Clearance Pilot</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one column. Hero copy beside a live access ticket that the copilot fills in; pipeline, pricing card with sign-up, FAQ. */
+:root {
+  --bg: #f3f5f7;
+  --surface: #ffffff;
+  --ink: #141b24;
+  --muted: #5a6675;
+  --line: #d8dee6;
+  --accent: #1f5fd6;
+  --accent-ink: #ffffff;
+  --pending: #b26a00;
+  --pending-bg: #fff3dd;
+  --ok: #1d7a46;
+  --ok-bg: #e2f4ea;
+  --missing: #b42318;
+  --missing-bg: #fde8e6;
+  --font-display: "Bricolage Grotesque", "Helvetica Neue", Arial, sans-serif;
+  --font-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e131a; --surface: #161d27; --ink: #e8edf3; --muted: #97a3b3; --line: #2a3442;
+    --accent: #6c9cff; --accent-ink: #0b1220;
+    --pending: #f0b04a; --pending-bg: #3a2a10; --ok: #5ccf8c; --ok-bg: #10301f;
+    --missing: #ff8a7d; --missing-bg: #3d1714;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e131a; --surface: #161d27; --ink: #e8edf3; --muted: #97a3b3; --line: #2a3442;
+  --accent: #6c9cff; --accent-ink: #0b1220;
+  --pending: #f0b04a; --pending-bg: #3a2a10; --ok: #5ccf8c; --ok-bg: #10301f;
+  --missing: #ff8a7d; --missing-bg: #3d1714;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink);
+  font-family: var(--font-body); font-size: 16px; line-height: 1.55;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 1080px; margin: 0 auto; padding-block: 28px 64px; display: grid; gap: 72px; }
+h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; margin: 0; letter-spacing: -0.01em; }
+h1 { font-size: clamp(2.1rem, 5vw, 3.4rem); line-height: 1.04; font-weight: 700; }
+h2 { font-size: clamp(1.5rem, 3vw, 2.1rem); line-height: 1.15; font-weight: 700; }
+h3 { font-size: 1.1rem; font-weight: 500; }
+p { margin: 0; }
+a { color: var(--accent); }
+.label { font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+
+header.top { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+.brand { font-family: var(--font-display); font-weight: 700; font-size: 1.25rem; display: flex; align-items: center; gap: 10px; }
+.brand svg { width: 26px; height: 26px; }
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  font: 600 1rem var(--font-body); padding: 12px 20px; border-radius: 8px;
+  background: var(--accent); color: var(--accent-ink); border: 0; cursor: pointer; text-decoration: none;
+}
+.btn:focus-visible, input:focus-visible, select:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.btn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); }
+.btn[disabled] { opacity: 0.6; cursor: wait; }
+
+.hero { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 48px; align-items: center; }
+.hero-copy { display: grid; gap: 20px; }
+.hero-copy .lede { font-size: 1.15rem; color: var(--muted); max-width: 34em; }
+.hero-cta { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+.hero-cta small { color: var(--muted); }
+
+/* The ticket */
+.ticket { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; font-family: var(--font-mono); font-size: 0.85rem; overflow: hidden; box-shadow: 0 18px 40px -24px rgba(10, 30, 60, 0.35); }
+.ticket-head { display: flex; justify-content: space-between; gap: 10px; padding: 14px 18px; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+.ticket-head b { font-weight: 500; }
+.pill { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 0.75rem; font-weight: 500; }
+.pill.pending { color: var(--pending); background: var(--pending-bg); }
+.pill.ok { color: var(--ok); background: var(--ok-bg); }
+.pill.missing { color: var(--missing); background: var(--missing-bg); }
+.ticket dl { margin: 0; padding: 14px 18px; display: grid; grid-template-columns: 120px minmax(0, 1fr); gap: 8px 14px; }
+.ticket dt { color: var(--muted); }
+.ticket dd { margin: 0; min-width: 0; overflow-wrap: anywhere; }
+.ticket .filled { color: var(--ok); }
+.ticket .log { border-top: 1px dashed var(--line); padding: 14px 18px; display: grid; gap: 8px; }
+.ticket .log p { display: grid; grid-template-columns: 52px minmax(0, 1fr); gap: 10px; }
+.ticket .log time { color: var(--muted); }
+.ticket .suggest { margin: 0 18px 18px; padding: 12px 14px; border-radius: 8px; background: var(--ok-bg); color: var(--ink); display: grid; gap: 4px; font-family: var(--font-body); font-size: 0.9rem; }
+.ticket .suggest strong { color: var(--ok); }
+
+/* Problem */
+.problem { display: grid; gap: 28px; }
+.quotes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+.quote { border-top: 2px solid var(--ink); padding-top: 14px; display: grid; gap: 10px; align-content: start; }
+.quote blockquote { margin: 0; font-family: var(--font-display); font-size: 1.15rem; line-height: 1.3; }
+.quote p { color: var(--muted); font-size: 0.92rem; }
+
+/* Pipeline: a real sequence, so the steps are numbered */
+.how { display: grid; gap: 28px; }
+.steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0; counter-reset: step; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+.steps li { padding: 20px 18px; display: grid; gap: 8px; align-content: start; border-left: 1px solid var(--line); counter-increment: step; min-width: 0; }
+.steps li:first-child { border-left: 0; }
+.steps li::before { content: counter(step); font-family: var(--font-mono); font-size: 0.8rem; color: var(--accent); }
+.steps p { color: var(--muted); font-size: 0.92rem; }
+
+/* Pricing + sign-up */
+.join { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: 40px; align-items: start; }
+.join-copy { display: grid; gap: 16px; }
+.join-copy ul { margin: 0; padding-left: 1.1em; display: grid; gap: 6px; color: var(--muted); }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 28px; display: grid; gap: 20px; }
+.price { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.price .amount { font-family: var(--font-display); font-size: 3rem; font-weight: 700; line-height: 1; font-variant-numeric: tabular-nums; }
+.price .per { color: var(--muted); }
+form { display: grid; gap: 14px; }
+.field { display: grid; gap: 6px; }
+.field label { font-weight: 500; font-size: 0.92rem; }
+input, select { font: inherit; padding: 11px 12px; border-radius: 8px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); width: 100%; }
+.row2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; }
+.fine { font-size: 0.82rem; color: var(--muted); }
+.err { color: var(--missing); font-size: 0.9rem; }
+.done { display: grid; gap: 10px; padding: 18px; border-radius: 10px; background: var(--ok-bg); }
+.done h3 { color: var(--ok); }
+
+/* FAQ */
+.faq { display: grid; gap: 20px; }
+.faq-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px 40px; }
+.faq-grid div { display: grid; gap: 6px; }
+.faq-grid p { color: var(--muted); }
+
+/* Team-only results */
+.results { border: 1px dashed var(--line); border-radius: 12px; padding: 20px; display: grid; gap: 14px; }
+.results-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.results .count { font-family: var(--font-display); font-size: 2rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+.table-wrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 0.88rem; font-variant-numeric: tabular-nums; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+th { font-family: var(--font-mono); font-weight: 500; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+
+footer { color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--line); padding-top: 20px; }
+
+@media (max-width: 860px) {
+  .hero, .join { grid-template-columns: minmax(0, 1fr); gap: 32px; }
+  .quotes { grid-template-columns: minmax(0, 1fr); }
+  .steps { grid-template-columns: minmax(0, 1fr); }
+  .steps li { border-left: 0; border-top: 1px solid var(--line); }
+  .steps li:first-child { border-top: 0; }
+  .faq-grid { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 460px) {
+  .row2 { grid-template-columns: minmax(0, 1fr); }
+  .ticket dl { grid-template-columns: minmax(0, 1fr); gap: 2px 0; }
+  .ticket dd { margin-bottom: 8px; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .ticket .reveal { animation: fill 0.5s ease both; }
+  .ticket .reveal:nth-of-type(2) { animation-delay: 0.15s; }
+  .ticket .reveal:nth-of-type(3) { animation-delay: 0.3s; }
+  @keyframes fill { from { opacity: 0.35; transform: translateY(3px); } to { opacity: 1; transform: none; } }
+}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="3" width="26" height="26" rx="7" fill="var(--accent)"/><path d="M10 16.5l4 4 8-9" stroke="var(--accent-ink)" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Clearance
+    </div>
+    <a class="btn ghost" href="#join">Join the pilot</a>
+  </header>
+
+  <section class="hero">
+    <div class="hero-copy">
+      <span class="label">For IT admins at large companies</span>
+      <h1>Stop chasing people to approve access tickets.</h1>
+      <p class="lede">Clearance reads each access request, works out what's missing, asks the right manager or system owner in Slack or Teams, and hands you a ready-to-approve ticket with a recommendation based on your policy and past decisions.</p>
+      <div class="hero-cta">
+        <a class="btn" href="#join">Join the pilot: $39/month</a>
+        <small>No charge until your pilot starts.</small>
+      </div>
+    </div>
+
+    <figure class="ticket" aria-label="Example access ticket that Clearance has filled in">
+      <div class="ticket-head">
+        <b>Example · IT-4821 access request</b>
+        <span class="pill ok">Ready to approve</span>
+      </div>
+      <dl>
+        <dt>Requester</dt><dd>Priya N. · Product Manager</dd>
+        <dt>Asked for</dt><dd>"need snowflake access for the Q4 launch dashboard"</dd>
+        <dt>System</dt><dd class="filled reveal">Snowflake · ANALYTICS_PROD</dd>
+        <dt>Scope</dt><dd class="filled reveal">Read-only, role ANALYST_RO</dd>
+        <dt>Duration</dt><dd class="filled reveal">30 days, until Dec 1</dd>
+        <dt>Approver</dt><dd class="filled">Dana K. (data platform owner)</dd>
+      </dl>
+      <div class="log">
+        <p><time>09:02</time><span>Found 3 missing fields: scope, duration, approver.</span></p>
+        <p><time>09:03</time><span>Asked Priya in Slack which tables she needs.</span></p>
+        <p><time>09:11</time><span>Dana confirmed read-only for 30 days.</span></p>
+      </div>
+      <div class="suggest">
+        <strong>Suggest: approve</strong>
+        <span>Matches policy DATA-04. 14 similar requests from PMs were approved this year.</span>
+      </div>
+    </figure>
+  </section>
+
+  <section class="problem" aria-labelledby="problem-h">
+    <div style="display:grid;gap:10px">
+      <span class="label">Why we're building this</span>
+      <h2 id="problem-h">Most access tickets arrive half-filled, and the follow-up lands on IT.</h2>
+    </div>
+    <div class="quotes">
+      <div class="quote">
+        <blockquote>"For approval, it would take weeks. It was ridiculous."</blockquote>
+        <p>A product manager we interviewed. Approvals stall while someone works out who owns the system.</p>
+      </div>
+      <div class="quote">
+        <blockquote>Which tables? For how long? Who signs off?</blockquote>
+        <p>The questions every admin asks again on ticket after ticket.</p>
+      </div>
+      <div class="quote">
+        <blockquote>IT ends up as the messenger between teams.</blockquote>
+        <p>Context lives in Slack threads and meeting notes, not in the ticket.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="how" aria-labelledby="how-h">
+    <div style="display:grid;gap:10px">
+      <span class="label">How it works</span>
+      <h2 id="how-h">From a one-line request to a decision you can trust</h2>
+    </div>
+    <ol class="steps">
+      <li><h3>Identify</h3><p>Reads the ticket and flags what's missing: system, scope, duration, approver.</p></li>
+      <li><h3>Find</h3><p>Pulls context from your policy, past tickets and the requester's project.</p></li>
+      <li><h3>Autofill</h3><p>Writes what it found back into the ticket in Jira, ServiceNow or your desk.</p></li>
+      <li><h3>Send</h3><p>Asks the requester or system owner in Slack or Teams for anything still unclear.</p></li>
+      <li><h3>Suggest</h3><p>Recommends approve, narrow or deny, and shows the policy and precedent behind it.</p></li>
+    </ol>
+  </section>
+
+  <section class="join" id="join" aria-labelledby="join-h">
+    <div class="join-copy">
+      <span class="label">Founding pilot · 20 teams</span>
+      <h2 id="join-h">Join the pilot</h2>
+      <p>We're onboarding a small group of IT and identity teams this winter. You decide every approval. Clearance only prepares the ticket.</p>
+      <ul>
+        <li>Works alongside Okta, Jira Service Management or ServiceNow</li>
+        <li>Slack and Microsoft Teams</li>
+        <li>Founding price is locked for your first year</li>
+        <li>Cancel anytime during the pilot</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="price">
+        <span class="amount">$39</span>
+        <span class="per">per admin seat / month</span>
+      </div>
+
+      <form id="signup" novalidate>
+        <div class="field">
+          <label for="email">Work email</label>
+          <input id="email" name="email" type="email" autocomplete="email" placeholder="you@company.com" required>
+        </div>
+        <div class="row2">
+          <div class="field">
+            <label for="role">Your role</label>
+            <select id="role" name="role">
+              <option value="it-admin">IT / systems admin</option>
+              <option value="it-manager">IT manager</option>
+              <option value="iam">Identity & access / security</option>
+              <option value="other">Something else</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="size">Company size</label>
+            <select id="size" name="size">
+              <option value="1-200">1–200</option>
+              <option value="201-1000">201–1,000</option>
+              <option value="1001-10000" selected>1,001–10,000</option>
+              <option value="10000+">10,000+</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn" id="submit" type="submit">Join the pilot at $39/month</button>
+        <p class="err" id="err" hidden></p>
+        <p class="fine">We'll email you when your pilot spot is ready. You won't be charged until then.</p>
+      </form>
+
+      <div class="done" id="done" hidden>
+        <h3>You're on the list.</h3>
+        <p>We'll email <b id="done-email"></b> when your pilot spot opens. Thanks for helping us build this.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="faq" aria-labelledby="faq-h">
+    <h2 id="faq-h">Questions</h2>
+    <div class="faq-grid">
+      <div><h3>Does Clearance grant access on its own?</h3><p>No. It gathers context and recommends. An admin still clicks approve.</p></div>
+      <div><h3>What does it need to connect to?</h3><p>Your ticketing tool, Slack or Teams, and read access to your access policy.</p></div>
+      <div><h3>Is the price final?</h3><p>$39 per admin seat is the founding pilot price, locked for the first year.</p></div>
+      <div><h3>Who's behind this?</h3><p>A small team building at Stanford, talking with IT admins and product managers at large tech companies.</p></div>
+    </div>
+  </section>
+
+  <section class="results" id="results" hidden aria-labelledby="results-h">
+    <div class="results-head">
+      <h3 id="results-h">Smoke test sign-ups (only your team sees this)</h3>
+      <span><span class="count" id="count">0</span> <span class="label">emails</span></span>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>When</th><th>Email</th><th>Role</th><th>Size</th><th>Source</th></tr></thead>
+        <tbody id="rows"><tr><td colspan="5">No sign-ups yet. They'll appear here as they come in.</td></tr></tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer>Clearance is in early development. Signing up reserves a pilot spot; it doesn't start a subscription.</footer>
+</div>
+
+<script>
+(function () {
+  // Where sign-ups go for visitors who can't write to this page's store
+  // (signed-out or outside-organization visitors). Set to a Google Form link.
+  var FALLBACK_FORM_URL = "";
+
+  var SOURCES = ["reddit", "lenny", "slack", "linkedin", "class", "direct"];
+  var source = (location.hash || "").replace("#", "");
+  if (SOURCES.indexOf(source) === -1) source = "direct";
+
+  var form = document.getElementById("signup");
+  var emailEl = document.getElementById("email");
+  var err = document.getElementById("err");
+  var btn = document.getElementById("submit");
+  var done = document.getElementById("done");
+  var db = null, me = null;
+
+  function showErr(msg) { err.textContent = msg; err.hidden = false; }
+  function goFallback(email) {
+    if (FALLBACK_FORM_URL) {
+      var url = FALLBACK_FORM_URL + (FALLBACK_FORM_URL.indexOf("?") === -1 ? "?" : "&") + "email=" + encodeURIComponent(email);
+      err.innerHTML = "";
+      var a = document.createElement("a");
+      a.href = url; a.target = "_blank"; a.rel = "noopener";
+      a.textContent = "Finish signing up on our form";
+      err.append("One more step: ", a, ".");
+      err.hidden = false;
+    } else {
+      showErr("Sign-ups aren't open from this link yet. Please try again soon.");
+    }
+  }
+
+  async function init() {
+    if (!window.claude || !window.claude.use) return;
+    try {
+      var results = await Promise.all([claude.use("db"), claude.use("user")]);
+      db = results[0];
+      var user = results[1];
+      if (user) me = await user.id();
+      if (db && user && await user.canEdit()) watchResults();
+    } catch (e) { db = null; }
+  }
+
+  function watchResults() {
+    var section = document.getElementById("results");
+    section.hidden = false;
+    db.collection("signups").orderBy("at", "desc").onSnapshot(function (snap) {
+      document.getElementById("count").textContent = snap.size;
+      var tbody = document.getElementById("rows");
+      tbody.textContent = "";
+      if (snap.empty) {
+        var tr = document.createElement("tr");
+        var td = document.createElement("td");
+        td.colSpan = 5; td.textContent = "No sign-ups yet. They'll appear here as they come in.";
+        tr.append(td); tbody.append(tr); return;
+      }
+      snap.docs.forEach(function (d) {
+        var v = d.data() || {};
+        var tr = document.createElement("tr");
+        var when = v.at ? new Date(v.at).toLocaleString([], { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }) : "";
+        [when, v.email, v.role, v.size, v.source].forEach(function (x) {
+          var td = document.createElement("td"); td.textContent = x || ""; tr.append(td);
+        });
+        tbody.append(tr);
+      });
+    }, function () { section.hidden = true; });
+  }
+
+  form.addEventListener("submit", async function (e) {
+    e.preventDefault();
+    err.hidden = true;
+    var email = emailEl.value.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showErr("Enter a work email like you@company.com."); emailEl.focus(); return; }
+    if (!db || !me) { goFallback(email); return; }
+    btn.disabled = true;
+    try {
+      await db.doc("signups/" + me).set({
+        email: email,
+        role: document.getElementById("role").value,
+        size: document.getElementById("size").value,
+        source: source,
+        price: 39,
+        at: new Date().toISOString()
+      });
+      form.hidden = true;
+      document.getElementById("done-email").textContent = email;
+      done.hidden = false;
+    } catch (x) {
+      goFallback(email);
+    } finally {
+      btn.disabled = false;
+    }
+  });
+
+  init();
+})();
+</script>
