@@ -67,9 +67,9 @@ header.top { display: flex; justify-content: space-between; align-items: center;
 
 /* Entrance: the ticket sits in a doorway; the doorman beside it opens the door on load */
 .entry { --dm-w: 150px; --dm-x: -44px; position: relative; padding-left: calc(var(--dm-w) * 0.84 + var(--dm-x)); border-bottom: 2px solid var(--line); }
-.doorway { position: relative; perspective: 1600px; padding: 10px 10px 0; border: 2px solid var(--line); border-bottom: 0; border-radius: 18px 18px 0 0; background: var(--bg-deep); }
+.doorway { position: relative; overflow: hidden; perspective: 1600px; padding: 10px 10px 0; border: 2px solid var(--line); border-bottom: 0; border-radius: 18px 18px 0 0; background: var(--bg-deep); }
 .doorway .ticket { margin: 0; }
-.door { display: none; position: absolute; inset: 10px 10px 0; border-radius: 12px 12px 0 0; background: var(--surface); border: 2px solid var(--line); transform-origin: right center; padding: 18px; gap: 14px; grid-template-rows: 1fr 1.4fr; }
+.door { display: none; position: absolute; inset: 10px 10px 0; border-radius: 12px 12px 0 0; background: var(--surface); border: 2px solid var(--line); transform-origin: right center; pointer-events: none; padding: 18px; gap: 14px; grid-template-rows: 1fr 1.4fr; }
 .door::before, .door::after { content: ""; border: 2px solid var(--line); border-radius: 6px; }
 .door .knob { position: absolute; left: 10px; bottom: calc(var(--dm-w) * 1.04); width: 14px; height: 14px; border-radius: 50%; background: var(--ink); }
 .doorman { position: absolute; left: var(--dm-x); bottom: 0; width: var(--dm-w); height: calc(var(--dm-w) * 2); overflow: visible; }
@@ -179,14 +179,15 @@ footer { color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--li
   .doorman { animation: dm-in 0.5s ease-out 0.2s both; }
   .dm-arm { animation: dm-arm 2.2s ease-in-out 0.7s both; }
   .dm-cap { animation: dm-tip 0.7s ease-in-out 2.9s both; }
-  .door { display: grid; animation: door-open 1.2s cubic-bezier(0.6, 0, 0.3, 1) 1.2s both; }
+  .door { display: grid; will-change: transform, opacity; animation: door-open 1.2s cubic-bezier(0.37, 0, 0.63, 1) 1.2s both, door-fade 0.18s linear 2.22s both; }
   .ticket .reveal { animation: fill 0.5s ease 2.3s both; }
   .ticket .reveal:nth-of-type(4) { animation-delay: 2.45s; }
   .ticket .reveal:nth-of-type(5) { animation-delay: 2.6s; }
   @keyframes dm-in { from { opacity: 0; transform: translateX(-16px); } to { opacity: 1; transform: none; } }
   @keyframes dm-arm { 0% { transform: rotate(0deg); } 25%, 55% { transform: rotate(-80deg); } 100% { transform: rotate(-105deg); } }
   @keyframes dm-tip { 0%, 100% { transform: none; } 50% { transform: translateY(-4px) rotate(-14deg); } }
-  @keyframes door-open { to { transform: rotateY(-110deg); } }
+  @keyframes door-open { to { transform: rotateY(-90deg); } }
+  @keyframes door-fade { to { opacity: 0; visibility: hidden; } }
   @keyframes fill { from { opacity: 0.35; transform: translateY(3px); } to { opacity: 1; transform: none; } }
 }
 </style>
