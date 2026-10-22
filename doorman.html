@@ -5,14 +5,14 @@
 <style>
 /* Layout: one column on deep navy. Hero copy beside an example access ticket the copilot fills in; pipeline, pricing card with sign-up, FAQ. */
 :root {
-  --bg: #0b1730;
-  --bg-deep: #081124;
-  --surface: #12224a;
-  --ink: #eef2fa;
-  --muted: #a3b1cc;
-  --line: #24386a;
+  --bg: #0d1b2a;
+  --bg-deep: #0a1522;
+  --surface: #1b263b;
+  --ink: #e0e1dd;
+  --muted: #778da9;
+  --line: #415a77;
   --accent: #f2c14e;
-  --accent-ink: #0b1730;
+  --accent-ink: #0d1b2a;
   --pending: #f2c14e; --pending-bg: #3a3214;
   --ok: #6fdba0; --ok-bg: #123a33;
   --missing: #ff8f80; --missing-bg: #42202a;
@@ -65,9 +65,24 @@ header.top { display: flex; justify-content: space-between; align-items: center;
 .mark.left { left: calc(50% - 50vw); translate: -50% 0; }
 .mark.right { right: calc(50% - 50vw); translate: 50% 0; }
 
+/* Entrance: the ticket sits in a doorway; the doorman beside it opens the door on load */
+.entry { --dm-w: 150px; --dm-x: -44px; position: relative; padding-left: calc(var(--dm-w) * 0.84 + var(--dm-x)); border-bottom: 2px solid var(--line); }
+.doorway { position: relative; perspective: 1600px; padding: 10px 10px 0; border: 2px solid var(--line); border-bottom: 0; border-radius: 18px 18px 0 0; background: var(--bg-deep); }
+.doorway .ticket { margin: 0; }
+.door { display: none; position: absolute; inset: 10px 10px 0; border-radius: 12px 12px 0 0; background: var(--surface); border: 2px solid var(--line); transform-origin: right center; padding: 18px; gap: 14px; grid-template-rows: 1fr 1.4fr; }
+.door::before, .door::after { content: ""; border: 2px solid var(--line); border-radius: 6px; }
+.door .knob { position: absolute; left: 10px; bottom: calc(var(--dm-w) * 1.04); width: 14px; height: 14px; border-radius: 50%; background: var(--ink); }
+.doorman { position: absolute; left: var(--dm-x); bottom: 0; width: var(--dm-w); height: calc(var(--dm-w) * 2); overflow: visible; }
+.doorman * { stroke: var(--ink); stroke-width: 3; stroke-linejoin: round; fill: var(--surface); }
+.doorman .solid { fill: var(--ink); stroke: none; }
+.doorman .band { fill: var(--accent); stroke: none; }
+.doorman .line { fill: none; }
+.dm-arm { transform-box: view-box; transform-origin: 67.5px 85px; transform: rotate(-105deg); }
+.dm-cap { transform-box: view-box; transform-origin: 50px 42px; }
+
 /* The ticket: a white card on the navy page, with light-theme tokens scoped to it */
 .ticket {
-  --surface: #ffffff; --ink: #0b1730; --muted: #5a6a8a; --line: #dde3ee;
+  --surface: #e0e1dd; --ink: #0d1b2a; --muted: #415a77; --line: rgba(13, 27, 42, 0.14);
   --ok: #157a4b; --ok-bg: #e3f5ec;
   --pending: #8a5a00; --pending-bg: #fdf1d3;
   --missing: #b3261e; --missing-bg: #fde7e4;
@@ -148,17 +163,30 @@ footer { color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--li
   .steps li { border-left: 0; border-top: 1px solid var(--line); }
   .steps li:first-child { border-top: 0; }
   .faq-grid { grid-template-columns: minmax(0, 1fr); }
+  .entry { --dm-w: 120px; --dm-x: 0px; }
   .mark { --size: 260px !important; opacity: 0.04; }
 }
 @media (max-width: 460px) {
   .row2 { grid-template-columns: minmax(0, 1fr); }
   .ticket dl { grid-template-columns: minmax(0, 1fr); gap: 2px 0; }
   .ticket dd { margin-bottom: 8px; }
+  .entry { --dm-w: 84px; }
+  .doorway { padding: 6px 6px 0; }
+  .door { inset: 6px 6px 0; }
 }
 @media (prefers-reduced-motion: no-preference) {
-  .ticket .reveal { animation: fill 0.5s ease both; }
-  .ticket .reveal:nth-of-type(2) { animation-delay: 0.15s; }
-  .ticket .reveal:nth-of-type(3) { animation-delay: 0.3s; }
+  /* Sequence: doorman steps in, reaches for the knob, the door swings open, he gestures in and tips his cap, then the filled fields land */
+  .doorman { animation: dm-in 0.5s ease-out 0.2s both; }
+  .dm-arm { animation: dm-arm 2.2s ease-in-out 0.7s both; }
+  .dm-cap { animation: dm-tip 0.7s ease-in-out 2.9s both; }
+  .door { display: grid; animation: door-open 1.2s cubic-bezier(0.6, 0, 0.3, 1) 1.2s both; }
+  .ticket .reveal { animation: fill 0.5s ease 2.3s both; }
+  .ticket .reveal:nth-of-type(4) { animation-delay: 2.45s; }
+  .ticket .reveal:nth-of-type(5) { animation-delay: 2.6s; }
+  @keyframes dm-in { from { opacity: 0; transform: translateX(-16px); } to { opacity: 1; transform: none; } }
+  @keyframes dm-arm { 0% { transform: rotate(0deg); } 25%, 55% { transform: rotate(-80deg); } 100% { transform: rotate(-105deg); } }
+  @keyframes dm-tip { 0%, 100% { transform: none; } 50% { transform: translateY(-4px) rotate(-14deg); } }
+  @keyframes door-open { to { transform: rotateY(-110deg); } }
   @keyframes fill { from { opacity: 0.35; transform: translateY(3px); } to { opacity: 1; transform: none; } }
 }
 </style>
@@ -184,6 +212,28 @@ footer { color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--li
       </div>
     </div>
 
+    <div class="entry">
+    <svg class="doorman" viewBox="0 0 100 200" aria-hidden="true">
+      <rect x="34" y="148" width="12" height="46" rx="3"/>
+      <rect x="54" y="148" width="12" height="46" rx="3"/>
+      <path class="line" d="M28 195 h20 M52 195 h20"/>
+      <rect x="27" y="80" width="11" height="44" rx="5.5"/>
+      <path d="M30 78 Q50 70 70 78 L74 156 H26 Z"/>
+      <path class="line" d="M42 76 L50 100 L58 76"/>
+      <circle class="solid" cx="44" cy="112" r="2.2"/><circle class="solid" cx="56" cy="112" r="2.2"/>
+      <circle class="solid" cx="44" cy="128" r="2.2"/><circle class="solid" cx="56" cy="128" r="2.2"/>
+      <circle cx="50" cy="56" r="14"/>
+      <g class="dm-cap">
+        <rect x="35" y="30" width="30" height="13" rx="4"/>
+        <rect class="band" x="36.5" y="37" width="27" height="4"/>
+        <path class="line" d="M32 44 H62 Q68 44 70 48"/>
+      </g>
+      <g class="dm-arm">
+        <rect x="62" y="80" width="11" height="44" rx="5.5"/>
+        <circle class="solid" cx="67.5" cy="127" r="5"/>
+      </g>
+    </svg>
+    <div class="doorway">
     <figure class="ticket" aria-label="Example access ticket that Doorman has filled in">
       <div class="ticket-head">
         <b>Example · IT-4821 access request</b>
@@ -208,6 +258,9 @@ footer { color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--li
         <span>Matches policy DATA-04. 14 similar requests from PMs were approved this year.</span>
       </div>
     </figure>
+    <div class="door" aria-hidden="true"><span class="knob"></span></div>
+    </div>
+    </div>
   </section>
 
   <section class="problem" aria-labelledby="problem-h">
