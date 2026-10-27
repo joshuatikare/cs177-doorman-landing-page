@@ -136,6 +136,7 @@ input, select { font: inherit; padding: 11px 12px; border-radius: 8px; border: 1
 .row2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; }
 .fine { font-size: 0.82rem; color: var(--muted); }
 .err { color: var(--missing); font-size: 0.9rem; }
+.public-join { display: grid; gap: 12px; justify-items: start; }
 .done { display: grid; gap: 10px; padding: 18px; border-radius: 10px; background: var(--ok-bg); }
 .done h3 { color: var(--ok); }
 
@@ -320,6 +321,11 @@ footer { color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--li
         <span class="per">per admin seat / month</span>
       </div>
 
+      <div class="public-join" id="public-join" hidden>
+        <a class="btn" id="public-join-btn" href="https://forms.gle/F2g29s9jbkGBjU7H6" target="_blank" rel="noopener">Join the pilot</a>
+        <p class="fine">Opens a short sign-up form. We'll email you when your pilot spot is ready. You won't be charged until then.</p>
+      </div>
+
       <form id="signup" novalidate>
         <div class="field">
           <label for="email">Work email</label>
@@ -387,7 +393,7 @@ footer { color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--li
 (function () {
   // Where sign-ups go for visitors who can't write to this page's store
   // (signed-out or outside-organization visitors). Set to a Google Form link.
-  var FALLBACK_FORM_URL = "";
+  var FALLBACK_FORM_URL = "https://forms.gle/F2g29s9jbkGBjU7H6";
 
   var SOURCES = ["reddit", "lenny", "slack", "linkedin", "class", "direct"];
   var source = (location.hash || "").replace("#", "");
@@ -403,7 +409,7 @@ footer { color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--li
   function showErr(msg) { err.textContent = msg; err.hidden = false; }
   function goFallback(email) {
     if (FALLBACK_FORM_URL) {
-      var url = FALLBACK_FORM_URL + (FALLBACK_FORM_URL.indexOf("?") === -1 ? "?" : "&") + "email=" + encodeURIComponent(email);
+      var url = FALLBACK_FORM_URL;
       err.innerHTML = "";
       var a = document.createElement("a");
       a.href = url; a.target = "_blank"; a.rel = "noopener";
@@ -416,7 +422,12 @@ footer { color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--li
   }
 
   async function init() {
-    if (!window.claude || !window.claude.use) return;
+    // Outside Claude (e.g. the GitHub Pages site) there is no store, so send people straight to the form.
+    if (!window.claude || !window.claude.use) {
+      form.hidden = true;
+      document.getElementById("public-join").hidden = false;
+      return;
+    }
     try {
       var results = await Promise.all([claude.use("db"), claude.use("user")]);
       db = results[0];
